@@ -90,6 +90,18 @@ AppRouter.get("/point", async (req: Request, res: Response) => {
     logs.push(data);
   });
   for (let i = 0; i < logs.length; i++) {
+    // console.log("win,", [
+    //   logs[i].winner1,
+    //   logs[i].winner1_point,
+    //   logs[i].winner2,
+    //   logs[i].winner2_point,
+    // ]);
+    // console.log("lose,", [
+    //   logs[i].loser1,
+    //   logs[i].loser1_point,
+    //   logs[i].loser2,
+    //   logs[i].loser2_point,
+    // ]);
     if (total.hasOwnProperty(logs[i].winner1)) {
       total[logs[i].winner1] += logs[i].winner1_point;
     } else {
@@ -103,12 +115,12 @@ AppRouter.get("/point", async (req: Request, res: Response) => {
     if (total.hasOwnProperty(logs[i].loser1)) {
       total[logs[i].loser1] -= logs[i].loser1_point;
     } else {
-      total[logs[i].loser1] = logs[i].loser1_point;
+      total[logs[i].loser1] = -1 * logs[i].loser1_point;
     }
     if (total.hasOwnProperty(logs[i].loser2)) {
       total[logs[i].loser2] -= logs[i].loser2_point;
     } else {
-      total[logs[i].loser2] = logs[i].loser2_point;
+      total[logs[i].loser2] = -1 * logs[i].loser2_point;
     }
   }
   const sortArr = Object.entries(total).sort(
@@ -125,6 +137,12 @@ AppRouter.get("/point", async (req: Request, res: Response) => {
   }
   console.log(msg);
   return res.send({ success: true, msg });
+});
+
+AppRouter.post("/point", async (req: Request, res: Response) => {
+  console.log(req.body.input);
+
+  return res.send({ success: true });
 });
 
 export default AppRouter;
