@@ -129,9 +129,12 @@ AppRouter.get("/point", async (req: Request, res: Response) => {
   let thisrank = 0;
   for (let i = 0; i < sortArr.length; i++) {
     if (sortArr[i][1] < rank[thisrank].point) {
-      msg += "\n\n";
+      console.log(sortArr[i]);
+      msg += "\n";
       msg += `- ${rank[thisrank].title} -\n`;
       thisrank++;
+      i--;
+      continue;
     }
     msg += `${sortArr[i][0]} : ${sortArr[i][1]}\n`;
   }
