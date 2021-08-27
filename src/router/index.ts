@@ -103,24 +103,32 @@ AppRouter.get("/point", async (req: Request, res: Response) => {
     //   logs[i].loser2_point,
     // ]);
     if (total.hasOwnProperty(logs[i].winner1)) {
-      total[logs[i].winner1] += logs[i].winner1_point;
+      const winner1 = logs[i].winner1.split("").join(".");
+      total[winner1] += logs[i].winner1_point;
     } else {
-      total[logs[i].winner1] = logs[i].winner1_point;
+      const winner1 = logs[i].winner1.split("").join(".");
+      total[winner1] = logs[i].winner1_point;
     }
     if (total.hasOwnProperty(logs[i].winner2)) {
-      total[logs[i].winner2] += logs[i].winner2_point;
+      const winner2 = logs[i].winner1.split("").join(".");
+      total[winner2] += logs[i].winner2_point;
     } else {
-      total[logs[i].winner2] = logs[i].winner2_point;
+      const winner2 = logs[i].winner1.split("").join(".");
+      total[winner2] = logs[i].winner2_point;
     }
     if (total.hasOwnProperty(logs[i].loser1)) {
-      total[logs[i].loser1] -= logs[i].loser1_point;
+      const loser1 = logs[i].winner1.split("").join(".");
+      total[loser1] -= logs[i].loser1_point;
     } else {
-      total[logs[i].loser1] = -1 * logs[i].loser1_point;
+      const loser1 = logs[i].winner1.split("").join(".");
+      total[loser1] = -1 * logs[i].loser1_point;
     }
     if (total.hasOwnProperty(logs[i].loser2)) {
-      total[logs[i].loser2] -= logs[i].loser2_point;
+      const loser2 = logs[i].winner1.split("").join(".");
+      total[loser2] -= logs[i].loser2_point;
     } else {
-      total[logs[i].loser2] = -1 * logs[i].loser2_point;
+      const loser2 = logs[i].winner1.split("").join(".");
+      total[loser2] = -1 * logs[i].loser2_point;
     }
   }
   const sortArr = Object.entries(total).sort(
@@ -144,7 +152,8 @@ AppRouter.get("/point", async (req: Request, res: Response) => {
 
 AppRouter.post("/point", async (req: Request, res: Response) => {
   console.log(req.body.input);
-
+  
+  if()
   return res.send({ success: true });
 });
 
