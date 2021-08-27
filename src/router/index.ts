@@ -136,7 +136,13 @@ AppRouter.get("/point", async (req: Request, res: Response) => {
       i--;
       continue;
     }
-    msg += `${sortArr[i][0].split("").join(".")} : ${sortArr[i][1]}\n`;
+    if (sortArr[i][0] === "소라") {
+      msg += `${sortArr[i][0].split("").join(".")} : ${15} (사실${
+        sortArr[i][1]
+      })\n`;
+    } else {
+      msg += `${sortArr[i][0].split("").join(".")} : ${sortArr[i][1]}\n`;
+    }
   }
   console.log(msg);
   return res.send({ success: true, msg });
