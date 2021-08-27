@@ -152,8 +152,7 @@ AppRouter.get("/point", async (req: Request, res: Response) => {
 
 AppRouter.post("/point", async (req: Request, res: Response) => {
   console.log(req.body.input);
-  
-  if()
+
   return res.send({ success: true });
 });
 
