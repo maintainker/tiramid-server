@@ -90,18 +90,6 @@ AppRouter.get("/point", async (req: Request, res: Response) => {
     logs.push(data);
   });
   for (let i = 0; i < logs.length; i++) {
-    // console.log("win,", [
-    //   logs[i].winner1,
-    //   logs[i].winner1_point,
-    //   logs[i].winner2,
-    //   logs[i].winner2_point,
-    // ]);
-    // console.log("lose,", [
-    //   logs[i].loser1,
-    //   logs[i].loser1_point,
-    //   logs[i].loser2,
-    //   logs[i].loser2_point,
-    // ]);
     if (total.hasOwnProperty(logs[i].winner1)) {
       total[logs[i].winner1] += logs[i].winner1_point;
     } else {
@@ -126,7 +114,6 @@ AppRouter.get("/point", async (req: Request, res: Response) => {
   const sortArr = Object.entries(total).sort(
     (a: any, b: any) => b[1] - a[1],
   ) as [string, number][];
-  console.log(sortArr);
   let thisrank = 0;
   for (let i = 0; i < sortArr.length; i++) {
     if (sortArr[i][1] < rank[thisrank].point) {
@@ -144,14 +131,96 @@ AppRouter.get("/point", async (req: Request, res: Response) => {
       msg += `${sortArr[i][0].split("").join(".")} : ${sortArr[i][1]}\n`;
     }
   }
-  console.log(msg);
   return res.send({ success: true, msg });
 });
-
 AppRouter.post("/point", async (req: Request, res: Response) => {
-  console.log(req.body.input);
-
-  return res.send({ success: true });
+  const inputArr = req.body.input.split("\n");
+  const logTime = new Date();
+  const doc = `${logTime.getFullYear()}${logTime.getMonth() + 1}`;
+  const logDate = ("0" + String(logTime.getDate())).slice(-2);
+  const logHour = ("0" + String(logTime.getHours())).slice(-2);
+  const logMinute = ("0" + String(logTime.getMinutes())).slice(-2);
+  const games = {
+    winner1: "",
+    winner2: "",
+    loser1: "",
+    loser2: "",
+    winner1_point: 0,
+    winner2_point: 0,
+    loser1_point: 0,
+    loser2_point: 0,
+    timeStamp: `${logDate}${logHour}${logMinute}`,
+  };
+  try {
+    if (inputArr[1][0] === "승" && inputArr[2][0] === "패") {
+      const winners = inputArr[1].split(" "); //[승,썰1.1,썰2.2]
+      const losers = inputArr[2].split(" "); //[패,썰3.2, 썰4]
+      const winner1 =
+        typeof winners[1] === "string" ? winners[1].split(".") : null;
+      const winner2 =
+        typeof winners[2] === "string" ? winners[2].split(".") : null;
+      const loser1 =
+        typeof losers[1] === "string" ? losers[1].split(".") : null;
+      const loser2 =
+        typeof losers[2] === "string" ? losers[2].split(".") : null;
+      if (winner1 && winner2 && loser1 && loser2) {
+        games.winner1 = winner1[0];
+        games.winner1_point = winner1[1] ? Number(winner1[1]) : 1;
+        games.winner2 = winner2[0];
+        games.winner2_point = winner2[1] ? Number(winner2[1]) : 1;
+        games.loser1 = loser1[0];
+        games.loser1_point = loser1[1] ? Number(loser1[1]) : 1;
+        games.loser2 = loser2[0];
+        games.loser2_point = loser2[1] ? Number(loser2[1]) : 1;
+      } else {
+        throw {
+          message: "형식을 맞춰서 입력해주세요",
+        };
+      }
+    } else if (inputArr[1][0] === "패" && inputArr[2][0] === "승") {
+      const losers = inputArr[1].split(" "); //[패,썰1.1,썰2.2]
+      const winners = inputArr[2].split(" "); //[승,썰3.2, 썰4]
+      const winner1 =
+        typeof winners[1] === "string" ? winners[1].split(".") : null;
+      const winner2 =
+        typeof winners[2] === "string" ? winners[2].split(".") : null;
+      const loser1 =
+        typeof losers[1] === "string" ? losers[1].split(".") : null;
+      const loser2 =
+        typeof losers[2] === "string" ? losers[2].split(".") : null;
+      if (winner1 && winner2 && loser1 && loser2) {
+        games.winner1 = winner1[0];
+        games.winner1_point = winner1[1] ? Number(winner1[1]) : 1;
+        games.winner2 = winner2[0];
+        games.winner2_point = winner2[1] ? Number(winner2[1]) : 1;
+        games.loser1 = loser1[0];
+        games.loser1_point = loser1[1] ? Number(loser1[1]) : 1;
+        games.loser2 = loser2[0];
+        games.loser2_point = loser2[1] ? Number(loser2[1]) : 1;
+      } else {
+        throw {
+          message: "형식을 맞춰서 입력해주세요",
+        };
+      }
+    } else {
+      throw {
+        message: "형식을 맞춰서 입력해주세요",
+      };
+    }
+    if (
+      games.loser1_point + games.loser2_point !==
+      games.winner1_point + games.winner2_point
+    ) {
+      throw {
+        message: "점수가 맞지 안습니다.",
+      };
+    } else {
+      await dbService.collection(`playerList${doc}`).add(games);
+    }
+    return res.send({ success: true, msg: "입력이 완료되었습니다." });
+  } catch (error) {
+    return res.send({ success: false, msg: error.message });
+  }
 });
 
 export default AppRouter;
